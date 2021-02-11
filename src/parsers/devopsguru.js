@@ -81,8 +81,9 @@ exports.parse = event => {
 	}
 
 	if (type === "NEW_RECOMMENDATION"
-			|| type === "NEW_ASSOCIATION"	)
-	{
+			|| type === "NEW_ASSOCIATION"
+			|| type === "CLOSED_INSIGHT"
+	) {
 		return true		// not handling yet
 	}
 };

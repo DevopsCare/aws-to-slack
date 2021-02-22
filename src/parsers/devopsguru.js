@@ -53,7 +53,7 @@ exports.parse = event => {
 					short: true
 				});
 		*/
-		var mrkdwnDescription = `<${url}|${description}`
+		var mrkdwnDescription = `<${url}|${description}>`
 
 		return event.attachmentWithDefaults({
 			author_name: "Amazon DevopsGuru",

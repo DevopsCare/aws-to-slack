@@ -1,5 +1,5 @@
 //
-// AWS GuardDuty event parser
+// AWS DevopsGuru event parser
 //
 exports.matches = event =>
 		_.has(event.message, "InsightId");
@@ -40,29 +40,26 @@ exports.parse = event => {
 	});
 
 	if (type === "NEW_INSIGHT") {
-		fields.push({
-			title: "Account",
-			value: accountId,
-			short: true
-		});
+		/* Less noise
+				fields.push({
+					title: "Account",
+					value: accountId,
+					short: true
+				});
 
-		fields.push({
-			title: "Region",
-			value: region,
-			short: true
-		});
-
-		fields.push({
-			title: "Url",
-			value: url,
-			short: false
-		});
+				fields.push({
+					title: "Region",
+					value: region,
+					short: true
+				});
+		*/
+		var mrkdwnDescription = `<${url}|${description}`
 
 		return event.attachmentWithDefaults({
 			author_name: "Amazon DevopsGuru",
 			fallback: description,
 			color: color,
-			title: description,
+			title: mrkdwnDescription,
 			fields: fields,
 			mrkdwn_in: ["title", "text"],
 			ts: createdAt,

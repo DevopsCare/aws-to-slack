@@ -1,33 +1,34 @@
 const _ = require("lodash")
-	, EventDef = require("./eventdef")
-	, Slack = require("./slack")
-	, Emailer = require("./ses")
-	, defaultParserWaterfall = [
-		// Ordered list of parsers:
-		"cloudwatch",
-		"codecommit/pullrequest",
-		"codecommit/repository",
-		"autoscaling",
-		"aws-health",
-		"batch-events",
-		"beanstalk",
-		"cloudformation",
-		"codebuild",
-		"codedeployCloudWatch",
-		"codedeploySns",
-		"codepipeline",
-		"codepipeline-approval",
-		"guardduty",
-		"inspector",
-		"rds",
-		"ecs-event",
-		"ses-bounce",
-		"ses-complaint",
-		"ses-received",
-		"devopsguru",
-		// Last attempt to parse, will match any message:
-		"generic",
-	];
+		, EventDef = require("./eventdef")
+		, Slack = require("./slack")
+		, Emailer = require("./ses")
+		, defaultParserWaterfall = [
+	// Ordered list of parsers:
+	"cloudwatch",
+	"codecommit/pullrequest",
+	"codecommit/repository",
+	"autoscaling",
+	"aws-health",
+	"batch-events",
+	"beanstalk",
+	"cloudformation",
+	"codebuild",
+	"codedeployCloudWatch",
+	"codedeploySns",
+	"codepipeline",
+	"codepipeline-approval",
+	"guardduty",
+	"inspector",
+	"rds",
+	"ecs-event",
+	"ses-bounce",
+	"ses-complaint",
+	"ses-received",
+	"devopsguru",
+	"xrayinsights",
+	// Last attempt to parse, will match any message:
+	"generic",
+];
 
 class LambdaHandler {
 

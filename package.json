@@ -18,6 +18,7 @@
     "url": "https://github.com/arabold/aws-to-slack.git"
   },
   "dependencies": {
+    "jmespath": "^0.15.0",
     "lodash": "^4.17.14"
   },
   "devDependencies": {

@@ -1,6 +1,8 @@
 //
 // AWS DevopsGuru event parser
 //
+var jmespath = require('jmespath');
+
 exports.matches = event =>
 		_.has(event.message, "InsightId");
 
@@ -15,6 +17,9 @@ exports.parse = event => {
 	const accountId = _.get(message, "AccountId");
 	const region = _.get(message, "Region");
 	const type = _.get(message, "MessageType");
+
+	const dimensions = jmespath.search(event.message, "Anomalies[].SourceDetails[].DataIdentifiers.dimensions").map(it => JSON.parse(it))
+	const resources = jmespath.search(dimensions, "[].Resource | join(',', @)")
 
 	const fields = [];
 
@@ -32,12 +37,19 @@ exports.parse = event => {
 		color = event.COLORS.critical;
 	}
 
-
 	fields.push({
-		title: "Type",
-		value: type,
+		title: "CreatedAt",
+		value: createdAt.toUTCString(),
 		short: true
 	});
+
+	if (resources) {
+		fields.push({
+			title: "Resources",
+			value: resources,
+			short: false
+		})
+	}
 
 	if (type === "NEW_INSIGHT") {
 		/* Less noise

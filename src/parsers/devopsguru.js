@@ -9,6 +9,15 @@ exports.matches = event =>
 exports.parse = event => {
 	const message = event.message;
 
+	const type = _.get(message, "MessageType");
+
+	if (type === "NEW_RECOMMENDATION"
+			|| type === "NEW_ASSOCIATION"
+			|| type === "CLOSED_INSIGHT"
+	) {
+		return true		// not handling yet
+	}
+
 	const id = _.get(message, "InsightId");
 	const url = _.get(message, "InsightUrl");
 	const description = _.get(message, "InsightDescription");
@@ -16,10 +25,9 @@ exports.parse = event => {
 	const severity = _.get(message, "InsightSeverity");
 	const accountId = _.get(message, "AccountId");
 	const region = _.get(message, "Region");
-	const type = _.get(message, "MessageType");
 
-	const dimensions = jmespath.search(event.message, "Anomalies[].SourceDetails[].DataIdentifiers.dimensions").map(it => JSON.parse(it))
-	const resources = jmespath.search(dimensions, "[].Resource | join(',', @)")
+	const dimensions = jmespath.search(event.message, "Anomalies[].SourceDetails[].DataIdentifiers.dimensions")?.map(it => JSON.parse(it))
+	const resources = dimensions ? jmespath.search(dimensions, "[].Resource | join(',', @)") : null
 
 	const fields = [];
 
@@ -87,12 +95,5 @@ exports.parse = event => {
 			mrkdwn_in: ["title", "text"],
 			ts: createdAt,
 		})
-	}
-
-	if (type === "NEW_RECOMMENDATION"
-			|| type === "NEW_ASSOCIATION"
-			|| type === "CLOSED_INSIGHT"
-	) {
-		return true		// not handling yet
 	}
 };

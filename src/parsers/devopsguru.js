@@ -27,7 +27,9 @@ exports.parse = event => {
 	const region = _.get(message, "Region");
 
 	const dimensions = jmespath.search(event.message, "Anomalies[].SourceDetails[].DataIdentifiers.dimensions")?.map(it => JSON.parse(it))
-	const resources = dimensions ? jmespath.search(dimensions, "[].Resource | join(',', @)") : null
+	let resources = dimensions ? jmespath.search(dimensions, "[].Resource | join(',', @)") : null
+	if (!resources)
+		resources = JSON.stringify(dimensions);
 
 	const fields = [];
 

@@ -21,7 +21,7 @@ exports.parse = event => {
 	const id = _.get(message, "InsightId");
 	const url = _.get(message, "InsightUrl");
 	const description = _.get(message, "InsightDescription");
-	const createdAt = new Date(_.get(message, "StartTime"));
+	const createdAt = _.get(message, "StartTime");
 	const severity = _.get(message, "InsightSeverity");
 	const accountId = _.get(message, "AccountId");
 	const region = _.get(message, "Region");
@@ -47,41 +47,27 @@ exports.parse = event => {
 		color = event.COLORS.critical;
 	}
 
-	fields.push({
-		title: "CreatedAt",
-		value: createdAt.toUTCString(),
-		short: true
-	});
+	if (createdAt)
+		fields.push({
+			title: "CreatedAt",
+			value: new Date(createdAt).toUTCString(),
+			short: true
+		});
 
-	if (resources) {
+	if (resources)
 		fields.push({
 			title: "Resources",
 			value: resources,
 			short: false
 		})
-	}
 
 	if (type === "NEW_INSIGHT") {
-		/* Less noise
-				fields.push({
-					title: "Account",
-					value: accountId,
-					short: true
-				});
-
-				fields.push({
-					title: "Region",
-					value: region,
-					short: true
-				});
-		*/
-		var mrkdwnDescription = `<${url}|${description}>`
-
 		return event.attachmentWithDefaults({
 			author_name: "Amazon DevopsGuru",
 			fallback: description,
 			color: color,
-			title: mrkdwnDescription,
+			title: description,
+			title_link: url,
 			fields: fields,
 			mrkdwn_in: ["title", "text"],
 			ts: createdAt,
@@ -93,6 +79,7 @@ exports.parse = event => {
 			fallback: `Severity upgraded to ${severity}`,
 			color: color,
 			title: `Severity upgraded to ${severity}`,
+			title_link: `https://console.aws.amazon.com/devops-guru/home?region=${region}#/insight/reactive/${id}`,
 			fields: fields,
 			mrkdwn_in: ["title", "text"],
 			ts: createdAt,

@@ -7,14 +7,15 @@ exports.matches = event =>
 exports.parse = event => {
 	const message = event.message;
 
-	const id = _.get(message, "InsightId");
-	const state = _.get(message, "message.detail.State");
+	const insightId = event.get("detail.InsightId");
+	const state = event.get("detail.State");
 
 	if (state === "CLOSED") {
 		return true		// not handling yet
 	}
 
 	const detailType = event.get("detail-type");
+	const groupName = event.get("detail.GroupName")
 	const description = event.get("detail.Summary")
 
 	const createdAt = new Date(event.get("detail.StartTime"));
@@ -26,7 +27,9 @@ exports.parse = event => {
 	return event.attachmentWithDefaults({
 		author_name: detailType,
 		fallback: description,
-		title: description,
+		title: `Group: ${groupName}`,
+		title_link: `https://console.aws.amazon.com/xray/home?region=${region}#/insights/${insightId}`,
+		text: description,
 		fields: fields,
 		mrkdwn_in: ["title", "text"],
 		ts: createdAt,

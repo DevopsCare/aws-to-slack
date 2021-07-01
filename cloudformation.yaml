@@ -1,20 +1,27 @@
----
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'SNS notification sent to Slack channel'
+Description: 'SNS notification sent to Slack or Discord channel'
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
-    - Label:
-        default: 'Slack Setup'
-      Parameters:
-      - HookUrl
-      - Channel
-      - KmsDecryptKeyArn
-    - Label:
-        default: 'Default Subscriptions'
-      Parameters:
-      - ParentAlertStack
-      - ErrorAlertEmail
+      - Label:
+          default: 'Generic'
+        Parameters:
+          - KmsDecryptKeyArn
+      - Label:
+          default: 'Slack Setup'
+        Parameters:
+          - HookUrl
+          - Channel
+      - Label:
+          default: 'Discord Setup'
+        Parameters:
+          - DiscordHookId
+          - DiscordHookToken
+      - Label:
+          default: 'Default Subscriptions'
+        Parameters:
+          - ParentAlertStack
+          - ErrorAlertEmail
 Parameters:
   ParentAlertStack:
     Type: String
@@ -25,10 +32,19 @@ Parameters:
     Default: ''
   HookUrl:
     Type: String
-    Description: 'Slack webhook URL; see https://example.slack.com/apps/'
+    Description: 'Optional: Slack webhook URL; see https://example.slack.com/apps/'
+    Default: ''
   Channel:
     Type: String
     Description: 'Optional: Channel name to post within'
+    Default: ''
+  DiscordHookId:
+    Type: String
+    Description: 'Optional: Discord webhook ID, The Webhooks ID and token can be found in the URL, when you request that URL'
+    Default: ''
+  DiscordHookToken:
+    Type: String
+    Description: 'Optional: Discord webhook Token'
     Default: ''
   KmsDecryptKeyArn:
     Type: String
@@ -36,7 +52,12 @@ Parameters:
     Default: ''
 
 Conditions:
+  HasHookUrl: !Not [!Equals [!Ref HookUrl, '']]
   HasChannel: !Not [!Equals [!Ref Channel, '']]
+
+  HasDiscordHookId: !Not [!Equals [!Ref DiscordHookId, '']]
+  HasDiscordHookToken: !Not [!Equals [!Ref DiscordHookToken, '']]
+
   HasKmsKey: !Not [!Equals [!Ref KmsDecryptKeyArn, '']]
   HasAlertStack: !Not [!Equals [!Ref ParentAlertStack, '']]
   HasAlertEmail: !Not [!Equals [!Ref ErrorAlertEmail, '']]
@@ -48,7 +69,7 @@ Resources:
     Properties:
       Handler: src/index.handler
       Role: !GetAtt FunctionRole.Arn
-      Runtime: nodejs10.x
+      Runtime: nodejs14.x
       MemorySize: 256
       Timeout: 15 # Cross-region metrics lookup requires at least 10s
       Code:
@@ -60,7 +81,19 @@ Resources:
             - HasChannel
             - !Ref Channel
             - !Ref 'AWS::NoValue'
-          SLACK_HOOK_URL: !Ref HookUrl
+          SLACK_HOOK_URL: !If
+            - HasHookUrl
+            - !Ref HookUrl
+            - !Ref 'AWS::NoValue'
+
+          DISCORD_HOOK_ID: !If
+            - HasDiscordHookId
+            - !Ref DiscordHookId
+            - !Ref 'AWS::NoValue'
+          DISCORD_HOOK_TOKEN: !If
+            - HasDiscordHookToken
+            - !Ref DiscordHookToken
+            - !Ref 'AWS::NoValue'
   FunctionRole:
     Type: 'AWS::IAM::Role'
     Properties:

@@ -66,6 +66,9 @@ class Slack {
 	static postMessage(message) {
 		return retry(3, async () => {
 			const hookUrl = await hookUrlPromise;
+			if (!hookUrl)
+				return null;
+
 			const slackChannel = await slackChannelPromise;
 			if (_.isEmpty(message.channel) && !_.isEmpty(slackChannel)) {
 				message.channel = slackChannel;

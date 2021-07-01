@@ -31,30 +31,25 @@ Supported AWS product notification formats:
 * CloudWatch Alarms *(incl. Metrics!)*
 * CodeBuild
 * CodeCommit
-* CodeDeploy 🆕 _(via SNS/CloudWatch)_
-* CodePipeline 🆕 _(via SNS/CloudWatch)_
-* CodePipeline Manual Approval 🆕
+* CodeDeploy _(via SNS/CloudWatch)_
+* CodePipeline _(via SNS/CloudWatch)_
+* CodePipeline Manual Approval
 * Elastic Beanstalk
-* GuardDuty 🆕
+* GuardDuty
 * Health Dashboard
 * Inspector
 * RDS
 * SES Received Notifications
 * Generic SNS messages
 * Plain text messages
+* DevopsGuru 🆕
+* X-Ray Insights 🆕
 
 Additional formats will be added. Pull Requests are welcome!
 
 ## Try!
 Ready to try the latest version for yourself? Installation into your own AWS environment is simple:
 
-### Option 1: Quick Start (OLD CODE)
-
-[![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=aws-to-slack)
-
-*Warning!* The template referenced by this link is an old template and old code! If you want the latest version of this repo, you need to update the Lambda code after it's launched.
-      
-### Option 2: Get the latest bug fixes
 
 1. Download this repo locally.
 
